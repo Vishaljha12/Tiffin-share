@@ -9,6 +9,10 @@ import ProfilePage from "./templates/ProfilePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RegisterPage from "./templates/RegisterPage.jsx";
 import LeaderboardPage from "./templates/LeaderboardPage.jsx";
+import NeighborhoodPage from "./templates/NeighborhoodPage.jsx";
+import StoriesPage from "./templates/StoriesPage.jsx";
+import DemandPage from "./templates/DemandPage.jsx";
+import GiftRedeemPage from "./templates/GiftRedeemPage.jsx";
 import { MealProvider } from "./templates/MealContext.jsx";
 import Layout from "./components/Layout.jsx";
 
@@ -24,6 +28,9 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/home" element={<FeedPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/stories" element={<StoriesPage />} />
+            <Route path="/demand" element={<DemandPage />} />
+            <Route path="/gift/:token" element={<GiftRedeemPage />} />
 
             {/* 🔐 PROTECTED ROUTES */}
             <Route
@@ -40,6 +47,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/neighborhood"
+              element={
+                <ProtectedRoute>
+                  <NeighborhoodPage />
                 </ProtectedRoute>
               }
             />

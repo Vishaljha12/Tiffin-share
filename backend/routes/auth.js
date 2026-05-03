@@ -101,7 +101,7 @@ router.get("/profile", auth, async (req, res) => {
 // ✅ UPDATE PROFILE
 router.put("/profile", auth, async (req, res) => {
   try {
-    const { name, phone, bio, avatar } = req.body;
+    const { name, phone, bio, avatar, neighborhood, pincode } = req.body;
     const user = await User.findById(req.user.id);
     
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -110,6 +110,8 @@ router.put("/profile", auth, async (req, res) => {
     if (phone) user.phone = phone;
     if (bio) user.bio = bio;
     if (avatar) user.avatar = avatar;
+    if (neighborhood !== undefined) user.neighborhood = neighborhood;
+    if (pincode !== undefined) user.pincode = pincode;
 
     await user.save();
     res.json({ message: "Profile updated successfully" });
@@ -154,11 +156,71 @@ router.get("/leaderboard", async (req, res) => {
     const topUsers = await User.find({})
       .sort({ points: -1 })
       .limit(20)
-      .select("name avatar points ratingAverage");
+      .select("name avatar points ratingAverage currentStreak longestStreak badges isVerifiedKitchen totalMealsShared");
       
     res.json(topUsers);
   } catch (err) {
     console.error("LEADERBOARD ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ SUBMIT KITCHEN VERIFICATION
+router.post("/verify-kitchen", auth, async (req, res) => {
+  try {
+    const { kitchenPhotos } = req.body;
+    if (!kitchenPhotos || kitchenPhotos.length === 0) {
+      return res.status(400).json({ message: "Please upload kitchen photos" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.kitchenPhotos = kitchenPhotos;
+    user.verificationStatus = "pending";
+    await user.save();
+
+    res.json({ message: "Verification submitted! We'll review your kitchen soon. 🛡️" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ APPROVE KITCHEN (admin-like, for demo purposes auto-approve)
+router.post("/approve-kitchen/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.isVerifiedKitchen = true;
+    user.verificationStatus = "approved";
+    await user.save();
+
+    res.json({ message: "Kitchen verified! ✅" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ GET USER BADGES
+router.get("/badges/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("badges currentStreak longestStreak totalMealsShared");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ GET CHEF PROFILE (public)
+router.get("/chef/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select("name avatar bio ratingAverage ratingCount currentStreak longestStreak badges isVerifiedKitchen totalMealsShared cuisinesPosted neighborhood");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });

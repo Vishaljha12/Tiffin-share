@@ -1,44 +1,151 @@
-/* Premium Glassmorphism & Utilities */
+/* ===== Premium Glassmorphism & Utilities ===== */
 
 .glass-card {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
-  transition: all 0.3s ease;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 122, 0, 0.3);
-  box-shadow: 0 8px 32px rgba(255, 122, 0, 0.15);
-  transform: translateY(-2px);
+  border-color: rgba(255, 122, 0, 0.25);
+  box-shadow: 
+    0 12px 40px rgba(255, 122, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-3px);
 }
 
 .glass-input {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: white;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
 }
 
 .glass-input:focus {
   outline: none;
   border-color: var(--color-orange-500);
-  box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.2);
+  box-shadow: 
+    0 0 0 3px rgba(255, 122, 0, 0.15),
+    0 0 20px rgba(255, 122, 0, 0.05);
   background: rgba(0, 0, 0, 0.4);
 }
 
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  transition: color 0.3s;
+}
+
+.glass-input:focus::placeholder {
+  color: rgba(255, 122, 0, 0.35);
+}
+
 .glow-text {
-  text-shadow: 0 0 20px rgba(255, 122, 0, 0.5);
+  text-shadow: 0 0 30px rgba(255, 122, 0, 0.4), 0 0 60px rgba(255, 122, 0, 0.15);
 }
 
 .bg-gradient-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(100px);
   z-index: -1;
-  opacity: 0.5;
+  opacity: 0.4;
   pointer-events: none;
+  animation: orbFloat 20s ease-in-out infinite;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(10px, -15px) scale(1.05); }
+  50% { transform: translate(-5px, 10px) scale(0.95); }
+  75% { transform: translate(15px, 5px) scale(1.02); }
+}
+
+/* ===== Stagger animation helpers ===== */
+.stagger-in > * {
+  opacity: 0;
+  animation: staggerFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-in > *:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Pulse glow for live elements ===== */
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 5px rgba(255, 122, 0, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(255, 122, 0, 0.6), 0 0 40px rgba(255, 122, 0, 0.2); }
+}
+
+/* ===== Badge shine sweep ===== */
+.badge-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+  animation: badgeShineSweep 3s ease-in-out infinite;
+}
+
+@keyframes badgeShineSweep {
+  0%, 100% { left: -100%; }
+  50% { left: 150%; }
+}
+
+/* ===== Smooth progress bar ===== */
+.progress-bar {
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== Floating label animation ===== */
+.float-label-group {
+  position: relative;
+}
+
+.float-label-group label {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== Smooth image loading ===== */
+.img-smooth {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.img-smooth.loaded {
+  opacity: 1;
 }
